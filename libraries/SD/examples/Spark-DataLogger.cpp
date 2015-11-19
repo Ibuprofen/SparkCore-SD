@@ -1,21 +1,21 @@
 /*
   SD card datalogger
- 
- This example shows how to log data from three analog sensors 
+
+ This example shows how to log data from three analog sensors
  to an SD card using the SD library.
-  
+
  The circuit:
  * analog sensors on analog ins 0, 1, and 2
  * SD card attached to SPI bus as follows:
-  Refer to "libraries/SdFat/Sd2Card_config.h" 
- 
+  Refer to "libraries/SdFat/Sd2Card_config.h"
+
  created  24 Nov 2010
  updated 2 Dec 2010
  by Tom Igoe
  This example code is in the public domain.
  modified for Maple(STM32 micros)/libmaple
  17 Mar 2012
- by dinau  
+ by dinau
  */
 
 #include "application.h"
@@ -39,14 +39,14 @@ void setup()
   Serial.begin(115200);
   while (!Serial.available());
   Serial.print("Initializing SD card...");
-  
+
   // see if the card is present and can be initialized:
   if (!SD.begin(chipSelect)) {
     Serial.println("Card failed, or not present");
     // don't do anything more:
     return;
   }
-  
+
 //  Comment out above lines and uncomment following lines to use SOFTWARE SPI
 /*
   // Initialize SOFTWARE SPI
@@ -88,9 +88,9 @@ void loop()
     dataFile.close();
     // print to the serial port too:
     Serial.println(dataString);
-  }  
+  }
   // if the file isn't open, pop up an error:
   else {
     Serial.println("error opening datalog.txt");
-  } 
+  }
 }

@@ -47,7 +47,7 @@ void setup() {
   // try SPI_HALF_SPEED if bus errors occur.
   // Initialize HARDWARE SPI with user defined chipSelect
   if (!card.init(SPI_FULL_SPEED, chipSelect)) error("card.init failed");
-  
+
   // Initialize SOFTWARE SPI
   //if (!card.init(mosiPin, misoPin, clockPin, chipSelect)) error("card.init failed");
 
@@ -60,7 +60,7 @@ void setup() {
   if (!root.openRoot(&volume)) error("openRoot failed");
 }
 
-void loop() { 
+void loop() {
   uint32_t t;
   double r;
 

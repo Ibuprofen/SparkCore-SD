@@ -1,22 +1,22 @@
 /*
   SD card read/write
- 
- This example shows how to read and write data to and from an SD card file  
+
+ This example shows how to read and write data to and from an SD card file
  The circuit:
  * SD card attached to SPI bus as follows:
-  Refer to "libraries/SdFat/Sd2Card_config.h" 
- 
- 
+  Refer to "libraries/SdFat/Sd2Card_config.h"
+
+
  created   Nov 2010
  by David A. Mellis
  updated 2 Dec 2010
  by Tom Igoe
  modified for Maple(STM32 micros)/libmaple
  17 Mar 2012
- by dinau   
- 
+ by dinau
+
  This example code is in the public domain.
-   
+
  */
 
 #include "application.h"
@@ -37,7 +37,7 @@ void setup()
   while (!Serial.available());
 
   Serial.print("Initializing SD card...");
-   
+
   // Initialize HARDWARE SPI with user defined chipSelect
   if (!SD.begin(chipSelect)) {
     Serial.println("initialization failed!");
@@ -54,11 +54,11 @@ void setup()
 */
 
   Serial.println("initialization done.");
-  
+
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
   myFile = SD.open("test.txt", FILE_WRITE);
-  
+
   // if the file opened okay, write to it:
   if (myFile) {
     Serial.print("Writing to test.txt...");
@@ -70,12 +70,12 @@ void setup()
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
   }
-  
+
   // re-open the file for reading:
   myFile = SD.open("test.txt");
   if (myFile) {
     Serial.println("test.txt:");
-    
+
     // read from the file until there's nothing else in it:
     while (myFile.available()) {
       Serial.write(myFile.read());
