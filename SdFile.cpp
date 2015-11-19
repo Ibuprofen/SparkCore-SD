@@ -22,7 +22,7 @@
 #include "SdFat.h"
 #include "SdFatUtil.h"
 
-//#include "spark_wiring_usbserial.h"
+//#include "spark_wiring_usbSerial1.h"
 
 //------------------------------------------------------------------------------
 // callback function for date/time
@@ -189,7 +189,7 @@ void SdFile::dirName(const dir_t& dir, char* name) {
   name[j] = 0;
 }
 //------------------------------------------------------------------------------
-/** List directory contents to Serial.
+/** List directory contents to Serial1.
  *
  * \param[in] flags The inclusive OR of
  *
@@ -217,7 +217,7 @@ void SdFile::ls(uint8_t flags, uint8_t indent) {
     if (!DIR_IS_FILE_OR_SUBDIR(p)) continue;
 
     // print any indent spaces
-    for (int8_t i = 0; i < indent; i++) Serial.print(' ');
+    for (int8_t i = 0; i < indent; i++) Serial1.print(' ');
 
     // print file name with possible blank fill
     printDirName(*p, flags & (LS_DATE | LS_SIZE) ? 14 : 0);
@@ -225,15 +225,15 @@ void SdFile::ls(uint8_t flags, uint8_t indent) {
     // print modify date/time if requested
     if (flags & LS_DATE) {
        printFatDate(p->lastWriteDate);
-       Serial.print(' ');
+       Serial1.print(' ');
        printFatTime(p->lastWriteTime);
     }
     // print size if requested
     if (!DIR_IS_SUBDIR(p) && (flags & LS_SIZE)) {
-      Serial.print(' ');
-      Serial.print(p->fileSize);
+      Serial1.print(' ');
+      Serial1.print(p->fileSize);
     }
-    Serial.println();
+    Serial1.println();
 
     // list subdirectory content if requested
     if ((flags & LS_R) && DIR_IS_SUBDIR(p)) {
@@ -583,7 +583,7 @@ uint8_t SdFile::openRoot(SdVolume* vol) {
   return true;
 }
 //------------------------------------------------------------------------------
-/** %Print the name field of a directory entry in 8.3 format to Serial.
+/** %Print the name field of a directory entry in 8.3 format to Serial1.
  *
  * \param[in] dir The directory structure containing the name.
  * \param[in] width Blank fill name if length is less than \a width.
@@ -593,37 +593,37 @@ void SdFile::printDirName(const dir_t& dir, uint8_t width) {
   for (uint8_t i = 0; i < 11; i++) {
     if (dir.name[i] == ' ')continue;
     if (i == 8) {
-      Serial.print('.');
+      Serial1.print('.');
       w++;
     }
-    Serial.print((char)dir.name[i]);
+    Serial1.print((char)dir.name[i]);
     w++;
   }
   if (DIR_IS_SUBDIR(&dir)) {
-    Serial.print('/');
+    Serial1.print('/');
     w++;
   }
   while (w < width) {
-    Serial.print(' ');
+    Serial1.print(' ');
     w++;
   }
 }
 //------------------------------------------------------------------------------
-/** %Print a directory date field to Serial.
+/** %Print a directory date field to Serial1.
  *
  *  Format is yyyy-mm-dd.
  *
  * \param[in] fatDate The date field from a directory entry.
  */
 void SdFile::printFatDate(uint16_t fatDate) {
-  Serial.print(FAT_YEAR(fatDate));
-  Serial.print('-');
+  Serial1.print(FAT_YEAR(fatDate));
+  Serial1.print('-');
   printTwoDigits(FAT_MONTH(fatDate));
-  Serial.print('-');
+  Serial1.print('-');
   printTwoDigits(FAT_DAY(fatDate));
 }
 //------------------------------------------------------------------------------
-/** %Print a directory time field to Serial.
+/** %Print a directory time field to Serial1.
  *
  * Format is hh:mm:ss.
  *
@@ -631,13 +631,13 @@ void SdFile::printFatDate(uint16_t fatDate) {
  */
 void SdFile::printFatTime(uint16_t fatTime) {
   printTwoDigits(FAT_HOUR(fatTime));
-  Serial.print(':');
+  Serial1.print(':');
   printTwoDigits(FAT_MINUTE(fatTime));
-  Serial.print(':');
+  Serial1.print(':');
   printTwoDigits(FAT_SECOND(fatTime));
 }
 //------------------------------------------------------------------------------
-/** %Print a value as two digits to Serial.
+/** %Print a value as two digits to Serial1.
  *
  * \param[in] v Value to be printed, 0 <= \a v <= 99
  */
@@ -646,7 +646,7 @@ void SdFile::printTwoDigits(uint8_t v) {
   str[0] = '0' + v/10;
   str[1] = '0' + v % 10;
   str[2] = 0;
-  Serial.print(str);
+  Serial1.print(str);
 }
 //------------------------------------------------------------------------------
 /**

@@ -63,13 +63,13 @@ typedef const unsigned short prog_short;
 /** Store and print a string in flash memory.*/
 /*
 #ifndef PgmPrint
-#define PgmPrint(x) Serial.print(PSTR(x))
+#define PgmPrint(x) Serial1.print(PSTR(x))
 #endif
 */
 /** Store and print a string in flash memory followed by a CR/LF.*/
 /*
 #ifndef PgmPrintln
-#define PgmPrintln(x) Serial.println(PSTR(x))
+#define PgmPrintln(x) Serial1.println(PSTR(x))
 #endif
 */
 /** Defined so doxygen works for function definitions. */
@@ -103,7 +103,7 @@ static int FreeRam(void) {
 #ifndef SerialPrint_P
 #define SerialPrint_P(str) { \
 	const char *p=str; \
-  for (uint8_t c; (c = pgm_read_byte(p)); p++) Serial.print((char)c); \
+  for (uint8_t c; (c = pgm_read_byte(p)); p++) Serial1.print((char)c); \
 }
 #endif
 ------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ static int FreeRam(void) {
 #ifndef SerialPrintln_P
 #define SerialPrintln_P(str) { \
   SerialPrint_P(str); \
-  Serial.println();   \
+  Serial1.println();   \
 }
 #endif
 */

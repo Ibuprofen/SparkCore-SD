@@ -20,7 +20,7 @@
 #include <application.h>
 #include "SdFat.h"
 
-//#include "spark_wiring_usbserial.h"
+//#include "spark_wiring_usbSerial1.h"
 
 //------------------------------------------------------------------------------
 // raw block cache
@@ -235,12 +235,12 @@ uint8_t SdVolume::init(Sd2Card* dev, uint8_t part) {
   // if part > 0 assume mbr volume with partition table
   if (part) {
     if (part > 4){
-		Serial.println("Error: SdVolume::init() MBR");
+		Serial1.println("Error: SdVolume::init() MBR");
 		return false;
 	}
 
     if (!cacheRawBlock(volumeStartBlock, CACHE_FOR_READ)) {
-		Serial.println("Error: SdVolume::init() Cache for read");
+		Serial1.println("Error: SdVolume::init() Cache for read");
 		return false;
 	}
 
@@ -249,13 +249,13 @@ uint8_t SdVolume::init(Sd2Card* dev, uint8_t part) {
       p->totalSectors < 100 ||
       p->firstSector == 0) {
       // not a valid partition
-	  Serial.println("Error: SdVolume::init() Invalid partition");
+	  Serial1.println("Error: SdVolume::init() Invalid partition");
 	  return false;
     }
 	volumeStartBlock = p->firstSector;
   }
   if (!cacheRawBlock(volumeStartBlock, CACHE_FOR_READ)) {
-	  Serial.println("Error: SdVolume::init() Cache for read2");
+	  Serial1.println("Error: SdVolume::init() Cache for read2");
 	  return false;
   }
 
@@ -265,7 +265,7 @@ uint8_t SdVolume::init(Sd2Card* dev, uint8_t part) {
     bpb->reservedSectorCount == 0 ||
     bpb->sectorsPerCluster == 0) {
        // not valid FAT volume
-      Serial.println("Error: SdVolume::init() invalid FAT volume");
+      Serial1.println("Error: SdVolume::init() invalid FAT volume");
       return false;
   }
   fatCount_ = bpb->fatCount;
@@ -276,7 +276,7 @@ uint8_t SdVolume::init(Sd2Card* dev, uint8_t part) {
   while (blocksPerCluster_ != (1 << clusterSizeShift_)) {
     // error if not power of 2
     if (clusterSizeShift_++ > 7) {
-		Serial.println("Error: SdVolume::init() not power of 2");
+		Serial1.println("Error: SdVolume::init() not power of 2");
 		return false;
 	}
   }

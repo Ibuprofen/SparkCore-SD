@@ -36,13 +36,13 @@ int lpcount=10;
 
 void setup()
 {
-  Serial.begin(115200);
-  while (!Serial.available());
-  Serial.print("Initializing SD card...");
+  Serial1.begin(115200);
+  while (!Serial1.available());
+  Serial1.print("Initializing SD card...");
 
   // see if the card is present and can be initialized:
   if (!SD.begin(chipSelect)) {
-    Serial.println("Card failed, or not present");
+    Serial1.println("Card failed, or not present");
     // don't do anything more:
     return;
   }
@@ -51,12 +51,12 @@ void setup()
 /*
   // Initialize SOFTWARE SPI
   if (!SD.begin(mosiPin, misoPin, clockPin, chipSelect)) {
-    Serial.println("Card failed, or not present");
+    Serial1.println("Card failed, or not present");
     return;
   }
 */
 
-  Serial.println("card initialized.");
+  Serial1.println("card initialized.");
 }
 
 void loop()
@@ -87,10 +87,10 @@ void loop()
     dataFile.println(dataString);
     dataFile.close();
     // print to the serial port too:
-    Serial.println(dataString);
+    Serial1.println(dataString);
   }
   // if the file isn't open, pop up an error:
   else {
-    Serial.println("error opening datalog.txt");
+    Serial1.println("error opening datalog.txt");
   }
 }

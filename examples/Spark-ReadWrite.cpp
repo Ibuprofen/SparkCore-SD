@@ -33,14 +33,14 @@ const uint8_t clockPin = A3;
 
 void setup()
 {
-  Serial.begin(115200);
-  while (!Serial.available());
+  Serial1.begin(115200);
+  while (!Serial1.available());
 
-  Serial.print("Initializing SD card...");
+  Serial1.print("Initializing SD card...");
 
   // Initialize HARDWARE SPI with user defined chipSelect
   if (!SD.begin(chipSelect)) {
-    Serial.println("initialization failed!");
+    Serial1.println("initialization failed!");
     return;
   }
 
@@ -48,12 +48,12 @@ void setup()
 /*
   // Initialize SOFTWARE SPI
   if (!SD.begin(mosiPin, misoPin, clockPin, chipSelect)) {
-    Serial.println("initialization failed!");
+    Serial1.println("initialization failed!");
     return;
   }
 */
 
-  Serial.println("initialization done.");
+  Serial1.println("initialization done.");
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
@@ -61,30 +61,30 @@ void setup()
 
   // if the file opened okay, write to it:
   if (myFile) {
-    Serial.print("Writing to test.txt...");
+    Serial1.print("Writing to test.txt...");
     myFile.println("testing 1, 2, 3.");
   // close the file:
     myFile.close();
-    Serial.println("done.");
+    Serial1.println("done.");
   } else {
     // if the file didn't open, print an error:
-    Serial.println("error opening test.txt");
+    Serial1.println("error opening test.txt");
   }
 
   // re-open the file for reading:
   myFile = SD.open("test.txt");
   if (myFile) {
-    Serial.println("test.txt:");
+    Serial1.println("test.txt:");
 
     // read from the file until there's nothing else in it:
     while (myFile.available()) {
-      Serial.write(myFile.read());
+      Serial1.write(myFile.read());
     }
     // close the file:
     myFile.close();
   } else {
     // if the file didn't open, print an error:
-    Serial.println("error opening test.txt");
+    Serial1.println("error opening test.txt");
   }
 }
 

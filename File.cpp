@@ -22,19 +22,19 @@
 
 File::File(SdFile f, const char *n) {
   // oh man you are kidding me, new() doesnt exist? Ok we do it by hand!
-  _file = (SdFile *)malloc(sizeof(SdFile)); 
+  _file = (SdFile *)malloc(sizeof(SdFile));
   if (_file) {
     memcpy(_file, &f, sizeof(SdFile));
-    
+
     strncpy(_name, n, 12);
     _name[12] = 0;
-    
+
     /* for debugging file open/close leaks
        nfilecount++;
-       Serial.print("Created \"");
-       Serial.print(n);
-       Serial.print("\": ");
-       Serial.println(nfilecount, DEC);
+       Serial1.print("Created \"");
+       Serial1.print(n);
+       Serial1.print("\": ");
+       Serial1.println(nfilecount, DEC);
     */
   }
 }
@@ -42,11 +42,11 @@ File::File(SdFile f, const char *n) {
 File::File(void) {
   _file = 0;
   _name[0] = 0;
-  //Serial.print("Created empty file object");
+  //Serial1.print("Created empty file object");
 }
 
 File::~File(void) {
-  //  Serial.print("Deleted file object");
+  //  Serial1.print("Deleted file object");
 }
 
 // returns a pointer to the file name
@@ -80,7 +80,7 @@ size_t File::write(const uint8_t *buf, size_t size) {
 }
 
 int File::peek() {
-  if (! _file) 
+  if (! _file)
     return 0;
 
   int c = _file->read();
@@ -89,14 +89,14 @@ int File::peek() {
 }
 
 int File::read() {
-  if (_file) 
+  if (_file)
     return _file->read();
   return -1;
 }
 
 // buffered read for more efficient, high speed reading
 int File::read(void *buf, uint16_t nbyte) {
-  if (_file) 
+  if (_file)
     return _file->read(buf, nbyte);
   return 0;
 }
@@ -133,19 +133,19 @@ uint32_t File::size() {
 void File::close() {
   if (_file) {
     _file->close();
-    free(_file); 
+    free(_file);
     _file = 0;
 
     /* for debugging file open/close leaks
     nfilecount--;
-    Serial.print("Deleted ");
-    Serial.println(nfilecount, DEC);
+    Serial1.print("Deleted ");
+    Serial1.println(nfilecount, DEC);
     */
   }
 }
 
 File::operator bool() {
-  if (_file) 
+  if (_file)
     return  _file->isOpen();
   return false;
 }

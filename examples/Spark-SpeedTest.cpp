@@ -25,13 +25,13 @@ SdFile file;
 
 void error(const char* str)
 {
-  Serial.print("error: ");
-  Serial.println(str);
+  Serial1.print("error: ");
+  Serial1.println(str);
   if (card.errorCode()) {
-    Serial.print("SD error: ");
-    Serial.print(card.errorCode(), HEX);
-    Serial.print(',');
-    Serial.println(card.errorData(), HEX);
+    Serial1.print("SD error: ");
+    Serial1.print(card.errorCode(), HEX);
+    Serial1.print(',');
+    Serial1.println(card.errorData(), HEX);
   }
   while(1) {
     SPARK_WLAN_Loop();
@@ -39,9 +39,9 @@ void error(const char* str)
 }
 
 void setup() {
-  Serial.begin(115200);
-  while (!Serial.available()) SPARK_WLAN_Loop();
-  while (Serial.available()) Serial.read();
+  Serial1.begin(115200);
+  while (!Serial1.available()) SPARK_WLAN_Loop();
+  while (Serial1.available()) Serial1.read();
 
   // initialize the SD card at SPI_FULL_SPEED for best performance.
   // try SPI_HALF_SPEED if bus errors occur.
@@ -54,8 +54,8 @@ void setup() {
   // initialize a FAT volume
   if (!volume.init(&card)) error("volume.init failed!");
 
-  Serial.print("Type is FAT");
-  Serial.println(volume.fatType(), DEC);
+  Serial1.print("Type is FAT");
+  Serial1.println(volume.fatType(), DEC);
 
   if (!root.openRoot(&volume)) error("openRoot failed");
 }
@@ -64,9 +64,9 @@ void loop() {
   uint32_t t;
   double r;
 
-  Serial.println("Type any character to start");
-  while (!Serial.available()) SPARK_WLAN_Loop();
-  while (Serial.available()) Serial.read();
+  Serial1.println("Type any character to start");
+  while (!Serial1.available()) SPARK_WLAN_Loop();
+  while (Serial1.available()) Serial1.read();
 
   // open or create file - truncate existing file.
   if (!file.open(&root, "BENCH.DAT", O_CREAT | O_TRUNC | O_RDWR)) {
@@ -78,11 +78,11 @@ void loop() {
   }
   buf[BUF_SIZE-2] = '\r';
   buf[BUF_SIZE-1] = '\n';
-  Serial.print("File size ");
-  Serial.print(FILE_SIZE_MB);
-  Serial.println(" MB");
+  Serial1.print("File size ");
+  Serial1.print(FILE_SIZE_MB);
+  Serial1.println(" MB");
   uint32_t n = FILE_SIZE/sizeof(buf);
-  Serial.println("Starting write test.  Please wait up to a minute");
+  Serial1.println("Starting write test.  Please wait up to a minute");
   // do write test
   t = millis();
   for (uint32_t i = 0; i < n; i++) {
@@ -93,11 +93,11 @@ void loop() {
   t = millis() - t;
   file.sync();
   r = (double)file.fileSize()/t;
-  Serial.print("Write ");
-  Serial.print(r);
-  Serial.println(" kB/sec");
-  Serial.println();
-  Serial.println("Starting read test.  Please wait up to a minute");
+  Serial1.print("Write ");
+  Serial1.print(r);
+  Serial1.println(" kB/sec");
+  Serial1.println();
+  Serial1.println("Starting read test.  Please wait up to a minute");
   // do read test
   file.rewind();
   t = millis();
@@ -108,9 +108,9 @@ void loop() {
   }
   t = millis() - t;
   r = (double)file.fileSize()/t;
-  Serial.print("Read ");
-  Serial.print(r);
-  Serial.println(" kB/sec");
-  Serial.println("Done");
+  Serial1.print("Read ");
+  Serial1.print(r);
+  Serial1.println(" kB/sec");
+  Serial1.println("Done");
   file.close();
 }

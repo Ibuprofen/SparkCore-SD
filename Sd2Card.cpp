@@ -22,7 +22,7 @@
 #include "Sd2Card.h"
 
 //#include "spark_wiring_spi.h"
-//#include "spark_wiring_usbserial.h"
+//#include "spark_wiring_usbSerial1.h"
 
 /*#include "dma.h"
 #ifdef SPI_DMA
@@ -168,7 +168,7 @@ inline void Sd2Card::chipSelectLow(void) {
 uint8_t Sd2Card::erase(uint32_t firstBlock, uint32_t lastBlock) {
   if (!eraseSingleBlockEnable()) {
     error(SD_CARD_ERROR_ERASE_SINGLE_BLOCK);
-	Serial.println("Error: Erase Single Block");
+	Serial1.println("Error: Erase Single Block");
     goto fail;
   }
   if (type_ != SD_CARD_TYPE_SDHC) {
@@ -179,12 +179,12 @@ uint8_t Sd2Card::erase(uint32_t firstBlock, uint32_t lastBlock) {
     || cardCommand(CMD33, lastBlock)
     || cardCommand(CMD38, 0)) {
       error(SD_CARD_ERROR_ERASE);
-	  Serial.println("Error: Erase");
+	  Serial1.println("Error: Erase");
 	  goto fail;
   }
   if (!waitNotBusy(SD_ERASE_TIMEOUT)) {
     error(SD_CARD_ERROR_ERASE_TIMEOUT);
-	Serial.println("Error: Erase timeout");
+	Serial1.println("Error: Erase timeout");
 	goto fail;
   }
   chipSelectHigh();
@@ -192,7 +192,7 @@ uint8_t Sd2Card::erase(uint32_t firstBlock, uint32_t lastBlock) {
 
  fail:
   chipSelectHigh();
-  Serial.println("Error: Sd2Card::Erase()");
+  Serial1.println("Error: Sd2Card::Erase()");
   return false;
 }
 //------------------------------------------------------------------------------
@@ -303,7 +303,7 @@ uint8_t Sd2Card::init() {
   // command to go idle in SPI mode
   while ((status_ = cardCommand(CMD0, 0)) != R1_IDLE_STATE) {
     if (((uint16_t)millis() - t0) > SD_INIT_TIMEOUT) {
-		Serial.println("Error: CMD0");
+		Serial1.println("Error: CMD0");
 		error(SD_CARD_ERROR_CMD0);
 		goto fail;
     }
@@ -316,7 +316,7 @@ uint8_t Sd2Card::init() {
     for (uint8_t i = 0; i < 4; i++) status_ = spiRec();
     if (status_ != 0XAA) {
       error(SD_CARD_ERROR_CMD8);
-	  Serial.println("Error: CMD8");
+	  Serial1.println("Error: CMD8");
 	  goto fail;
     }
     type(SD_CARD_TYPE_SD2);
@@ -327,7 +327,7 @@ uint8_t Sd2Card::init() {
   while ((status_ = cardAcmd(ACMD41, arg)) != R1_READY_STATE) {
     // check for timeout
     if (((uint16_t)millis() - t0) > SD_INIT_TIMEOUT) {
-		Serial.println("Error: ACMD41");
+		Serial1.println("Error: ACMD41");
 		error(SD_CARD_ERROR_ACMD41);
 		goto fail;
     }
@@ -335,7 +335,7 @@ uint8_t Sd2Card::init() {
   // if SD2 read OCR register to check for SDHC card
   if (type() == SD_CARD_TYPE_SD2) {
     if (cardCommand(CMD58, 0)) {
-		Serial.println("Error: CMD58");
+		Serial1.println("Error: CMD58");
 		error(SD_CARD_ERROR_CMD58);
 		goto fail;
     }
@@ -350,7 +350,7 @@ uint8_t Sd2Card::init() {
 
  fail:
   chipSelectHigh();
-  Serial.println("Error: Sd2Card::init()");
+  Serial1.println("Error: Sd2Card::init()");
   return false;
 }
 //------------------------------------------------------------------------------
@@ -408,7 +408,7 @@ uint8_t Sd2Card::readData(uint32_t block,
     if (type()!= SD_CARD_TYPE_SDHC) block <<= 9;
     if (cardCommand(CMD17, block)) {
       error(SD_CARD_ERROR_CMD17);
-	  Serial.println("Error: CMD17");
+	  Serial1.println("Error: CMD17");
       goto fail;
     }
     if (!waitStartBlock()) {
@@ -484,7 +484,7 @@ uint8_t Sd2Card::readData(uint32_t block,
 
  fail:
   chipSelectHigh();
-  Serial.println("Error: Sd2Card::readData()");
+  Serial1.println("Error: Sd2Card::readData()");
   return false;
 }
 //------------------------------------------------------------------------------
@@ -517,7 +517,7 @@ uint8_t Sd2Card::readRegister(uint8_t cmd, void* buf) {
   uint8_t* dst = reinterpret_cast<uint8_t*>(buf);
   if (cardCommand(cmd, 0)) {
 	  error(SD_CARD_ERROR_READ_REG);
-	  Serial.println("Error: Read reg");
+	  Serial1.println("Error: Read reg");
 	  goto fail;
   }
   if (!waitStartBlock()) goto fail;
@@ -529,7 +529,7 @@ uint8_t Sd2Card::readRegister(uint8_t cmd, void* buf) {
   return true;
 
  fail:
-  Serial.println("Error: Sd2Card::readRegister()");
+  Serial1.println("Error: Sd2Card::readRegister()");
   chipSelectHigh();
   return false;
 }
@@ -580,20 +580,20 @@ uint8_t Sd2Card::waitStartBlock(void) {
   while ((status_ = spiRec()) == 0XFF) {
     if (((uint16_t)millis() - t0) > SD_READ_TIMEOUT) {
       error(SD_CARD_ERROR_READ_TIMEOUT);
-	  Serial.println("Error: Read timeout");
+	  Serial1.println("Error: Read timeout");
       goto fail;
     }
   }
   if (status_ != DATA_START_BLOCK) {
     error(SD_CARD_ERROR_READ);
-	Serial.println("Error: Read");
+	Serial1.println("Error: Read");
     goto fail;
   }
   return true;
 
  fail:
   chipSelectHigh();
-  Serial.println("Error: Sd2Card::waitStartBlock()");
+  Serial1.println("Error: Sd2Card::waitStartBlock()");
   return false;
 }
 //------------------------------------------------------------------------------
@@ -610,7 +610,7 @@ uint8_t Sd2Card::writeBlock(uint32_t blockNumber, const uint8_t* src) {
   // don't allow write to first block
   if (blockNumber == 0) {
     error(SD_CARD_ERROR_WRITE_BLOCK_ZERO);
-    Serial.println("Error: Write block zero");
+    Serial1.println("Error: Write block zero");
     goto fail;
   }
 #endif  // SD_PROTECT_BLOCK_ZERO
@@ -618,7 +618,7 @@ uint8_t Sd2Card::writeBlock(uint32_t blockNumber, const uint8_t* src) {
   // use address if not SDHC card
   if (type() != SD_CARD_TYPE_SDHC) blockNumber <<= 9;
   if (cardCommand(CMD24, blockNumber)) {
-	Serial.println("Error: CMD24");
+	Serial1.println("Error: CMD24");
 	error(SD_CARD_ERROR_CMD24);
 	goto fail;
   }
@@ -627,13 +627,13 @@ uint8_t Sd2Card::writeBlock(uint32_t blockNumber, const uint8_t* src) {
   // wait for flash programming to complete
   if (!waitNotBusy(SD_WRITE_TIMEOUT)) {
     error(SD_CARD_ERROR_WRITE_TIMEOUT);
-    Serial.println("Error: Write timeout");
+    Serial1.println("Error: Write timeout");
     goto fail;
   }
   // response is r2 so get and check two bytes for nonzero
   if (cardCommand(CMD13, 0) || spiRec()) {
     error(SD_CARD_ERROR_WRITE_PROGRAMMING);
-    Serial.println("Error: Write programming");
+    Serial1.println("Error: Write programming");
     goto fail;
   }
   chipSelectHigh();
@@ -641,7 +641,7 @@ uint8_t Sd2Card::writeBlock(uint32_t blockNumber, const uint8_t* src) {
 
  fail:
   chipSelectHigh();
-  Serial.println("Error: Sd2Card::writeBlock");
+  Serial1.println("Error: Sd2Card::writeBlock");
   return false;
 }
 //------------------------------------------------------------------------------
@@ -650,7 +650,7 @@ uint8_t Sd2Card::writeData(const uint8_t* src) {
   // wait for previous write to finish
   if (!waitNotBusy(SD_WRITE_TIMEOUT)) {
     error(SD_CARD_ERROR_WRITE_MULTIPLE);
-	Serial.println("Error: writeData");
+	Serial1.println("Error: writeData");
     chipSelectHigh();
     return false;
   }
@@ -684,8 +684,8 @@ uint8_t Sd2Card::writeData(uint8_t token, const uint8_t* src) {
   if ((status_ & DATA_RES_MASK) != DATA_RES_ACCEPTED) {
     error(SD_CARD_ERROR_WRITE);
     chipSelectHigh();
-	Serial.println("Error: Write");
-    Serial.println("Error: Sd2Card::writeData()");
+	Serial1.println("Error: Write");
+    Serial1.println("Error: Sd2Card::writeData()");
     return false;
   }
   return true;
@@ -707,13 +707,13 @@ uint8_t Sd2Card::writeStart(uint32_t blockNumber, uint32_t eraseCount) {
   // don't allow write to first block
   if (blockNumber == 0) {
     error(SD_CARD_ERROR_WRITE_BLOCK_ZERO);
-	Serial.println("Error: Write block zero");
+	Serial1.println("Error: Write block zero");
     goto fail;
   }
 #endif  // SD_PROTECT_BLOCK_ZERO
   // send pre-erase count
   if (cardAcmd(ACMD23, eraseCount)) {
-	Serial.println("Error: ACMD23");
+	Serial1.println("Error: ACMD23");
     error(SD_CARD_ERROR_ACMD23);
     goto fail;
   }
@@ -721,14 +721,14 @@ uint8_t Sd2Card::writeStart(uint32_t blockNumber, uint32_t eraseCount) {
   if (type() != SD_CARD_TYPE_SDHC) blockNumber <<= 9;
   if (cardCommand(CMD25, blockNumber)) {
     error(SD_CARD_ERROR_CMD25);
-	Serial.println("Error: CMD25");
+	Serial1.println("Error: CMD25");
     goto fail;
   }
   return true;
 
  fail:
   chipSelectHigh();
-    Serial.println("Error: Sd2Card::writeStart()");
+    Serial1.println("Error: Sd2Card::writeStart()");
   return false;
 }
 //------------------------------------------------------------------------------
@@ -747,7 +747,7 @@ uint8_t Sd2Card::writeStop(void) {
  fail:
   error(SD_CARD_ERROR_STOP_TRAN);
   chipSelectHigh();
-    Serial.println("Error: Sd2Card::writeStop()");
+    Serial1.println("Error: Sd2Card::writeStop()");
   return false;
 }
 
